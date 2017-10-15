@@ -52,7 +52,7 @@ class Account {
    * @param {string} name Delete one of the chars
    */
   deleteCharacter(name) {
-    var picked = this.characters.find(c => c.username === name);
+    let picked = this.characters.find(c => c.username === name);
     picked.deleted = true;
     this.save();
   }
@@ -61,7 +61,7 @@ class Account {
    * @param {string} name Removes the deletion of one of the chars
    */
   undeleteCharacter(name) {
-    var picked = this.characters.find(c => c.username === name);
+    let picked = this.characters.find(c => c.username === name);
     picked.deleted = false;
     this.save();
   }
