@@ -141,7 +141,7 @@ class Character extends EventEmitter
    * @return {number}
    */
   getBaseAttribute(attr) {
-    var attr = this.attributes.get(attr);
+    const attr = this.attributes.get(attr);
     return attr && attr.base;
   }
 
