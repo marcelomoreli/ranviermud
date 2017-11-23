@@ -178,8 +178,6 @@ class CommandParser {
       // prioritize keywords over item/player names
       if (entry.keywords) {
         let keywordFound = 0;
-        let currKey = key;
-        let currEntry = entry;
         for (let x in keyword) {
           let currKeyword = keyword[x];
           keywordMatch = false;
