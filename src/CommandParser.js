@@ -154,15 +154,17 @@ class CommandParser {
     }
 
     if (parts.length === 1) {
-      keyword = parts[0];
+      keyword = parts[0].split(',');
     } else {
       findNth = parseInt(parts[0], 10);
-      keyword = parts[1];
+      keyword = parts[1].split(',');
     }
+    const qtyKeyword = keyword.length;
 
     let encountered = 0;
     for (let entity of list) {
       let key, entry;
+      let keywordMatch = false;
       if (list instanceof Map) {
         [key, entry] = entity;
       } else {
@@ -174,24 +176,44 @@ class CommandParser {
       }
 
       // prioritize keywords over item/player names
-      if (entry.keywords && (entry.keywords.includes(keyword) || entry.uuid === keyword)) {
-        encountered++;
-        if (encountered === findNth) {
-          return returnKey ? [key, entry] : entry;
-        }
-        // if the keyword matched skip to next loop so we don't double increment
-        // the encountered counter
-        continue;
-      }
+      if (entry.keywords) {
+        let keywordFound = 0;
+        let currKey = key;
+        let currEntry = entry;
+        for (let x in keyword) {
+          let currKeyword = keyword[x];
+          keywordMatch = false;
 
-      if (entry.name && entry.name.toLowerCase().includes(keyword)) {
-        encountered++;
-        if (encountered === findNth) {
-          return returnKey ? [key, entry] : entry;
+          for (const idx in entry.keywords) {
+            const word = entry.keywords[idx];
+            if (word.indexOf(currKeyword) == 0 || entry.uuid === currKeyword) {
+              keywordFound++;
+              keywordMatch = true;
+              break;
+            }
+          }
+
+          if (entry.name && !keywordMatch) {
+            const names = entry.name.toLowerCase().split(' ');
+            for (const idx in names) {
+              const word = names[idx];
+              if (word.indexOf(currKeyword) == 0) {
+                keywordFound++;
+                keywordMatch = true;
+                break;
+              }
+            }
+          }
+
+          if (keywordMatch && keywordFound == qtyKeyword) {
+            encountered++;
+            if (encountered === findNth) {
+              return returnKey ? [key, entry] : entry;
+            }
+          }
         }
       }
     }
-
     return false;
   }
 }
